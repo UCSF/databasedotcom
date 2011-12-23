@@ -380,6 +380,7 @@ module Databasedotcom
     end
 
     def https_request(host=nil)
+      puts" instance_url = '#{self.instance_url}', uri parse = '#{URI.parse(self.instance_url).host}'  "
       Net::HTTP.new(host || URI.parse(self.instance_url).host, 443).tap do |http| 
         http.use_ssl = true 
         http.ca_file = self.ca_file if self.ca_file

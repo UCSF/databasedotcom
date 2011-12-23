@@ -381,6 +381,7 @@ module Databasedotcom
     end
 
     def https_request(host=nil)
+      host = host.match(/^[http]/) ? URI.parse(hsot).host : host
       puts" instance_url = '#{self.instance_url}', uri parse = '#{URI.parse(self.instance_url).host}', host = '#{host}'  "
       Net::HTTP.new(host || URI.parse(self.instance_url).host, 443).tap do |http| 
         http.use_ssl = true 

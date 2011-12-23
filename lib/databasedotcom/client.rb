@@ -347,10 +347,11 @@ module Databasedotcom
 
     def ensure_expected_response(expected_result_class)
       response = yield
-
+      puts "ensure_expected_response"
       unless response.is_a?(expected_result_class || Net::HTTPSuccess)
         if response.is_a?(Net::HTTPUnauthorized)
           if self.refresh_token
+            puts "---ensure_expected_response ----- self.refresh_token = '#{self.refresh_token}' , self.host = '#{self.host}' "
             response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "refresh_token", :refresh_token => self.refresh_token, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
               response = https_request(self.host).post(encoded_path, nil)
               if response.is_a?(Net::HTTPOK)

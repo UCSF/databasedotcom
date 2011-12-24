@@ -347,9 +347,11 @@ module Databasedotcom
 
     def ensure_expected_response(expected_result_class)
       response = yield
+      puts "ensure_expected_response"
       unless response.is_a?(expected_result_class || Net::HTTPSuccess)
         if response.is_a?(Net::HTTPUnauthorized)
           if self.refresh_token
+            puts "-------- ensure_expected_response --------- refresh_token = '#{self.refresh_token}', host = '#{self.host}', client_id = '#{self.client_id}', client_secret= '#{self.client_secret}' "
              response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "refresh_token", :refresh_token => self.refresh_token, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
               response = https_request(self.host).post(encoded_path, nil)
               if response.is_a?(Net::HTTPOK)
@@ -379,7 +381,8 @@ module Databasedotcom
     end
 
     def https_request(host=nil)
-      host = (host != nil) ? ((host.match(/^[http]/) ? URI.parse(host).host : host)) : host
+       host = (host != nil) ? ((host.match(/^[http]/) ? URI.parse(host).host : host)) : host
+       puts "https_request host = '#{host}', instance_url = '#{self.instance_url}', ca_file = '#{self.ca_file}', verify_mode = '#{self.verify_mode}'  "
        Net::HTTP.new(host || URI.parse(self.instance_url).host, 443).tap do |http| 
         http.use_ssl = true 
         http.ca_file = self.ca_file if self.ca_file

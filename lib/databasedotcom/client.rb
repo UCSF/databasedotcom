@@ -360,6 +360,8 @@ module Databasedotcom
               response
             end
           elsif self.username && self.password
+          puts "-------- ensure_expected_response --------- username = '#{self.username}', password = '#{self.password}', host = '#{self.host}', client_id = '#{self.client_id}', client_secret= '#{self.client_secret}' "
+
             response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "password", :username => self.username, :password => self.password, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
               response = https_request(self.host).post(encoded_path, nil)
               if response.is_a?(Net::HTTPOK)

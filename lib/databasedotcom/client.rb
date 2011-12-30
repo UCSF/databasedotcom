@@ -293,7 +293,7 @@ module Databasedotcom
     # +Authorization+ header is automatically included, as are any additional headers specified in _headers_.  Returns the HTTPResult if it is of type
     # HTTPSuccess- raises SalesForceError otherwise.
     def http_get(path, parameters={}, headers={})
-      puts "--------- http_get path = '#{path}' " 
+      puts "--------- http_get ---------- " 
       with_encoded_path_and_checked_response(path, parameters) do |encoded_path|
         puts "--------- http_get encoded_path = '#{encoded_path}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
         https_request.get(encoded_path, {"Authorization" => "OAuth #{self.oauth_token}"}.merge(headers))
@@ -341,7 +341,7 @@ module Databasedotcom
     private
 
     def with_encoded_path_and_checked_response(path, parameters, options = {})
-      puts "------- with_encoded_path_and_checked_response path = '#{path}' "
+      puts "------- with_encoded_path_and_checked_response ---------- "
       ensure_expected_response(options[:expected_result_class]) do
         puts "------- with_encoded_path_and_checked_response options = '#{options}', parameters = '#{parameters}', path = '#{path}' "
         with_logging(encode_path_with_params(path, parameters), options) do |encoded_path|
@@ -351,7 +351,7 @@ module Databasedotcom
     end
 
     def with_logging(encoded_path, options)
-      puts "--------- with_logging encoded_path = '#{encoded_path}', options = '#{options}' "
+      puts "--------- with_logging ----------- "
       log_request(encoded_path, options)
       response = yield encoded_path
       puts "--------- with_logging response = '#{response}' "

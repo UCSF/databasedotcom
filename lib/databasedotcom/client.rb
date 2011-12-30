@@ -553,7 +553,7 @@ module Databasedotcom
     end
 
     def parse_auth_response(body)
-      puts "------- parse_auth_response, body = '#{body}' "
+      puts "------- parse_auth_response, body "
       json = JSON.parse(body)
       parse_user_id_and_org_id_from_identity_url(json["id"])
       puts "------- parse_auth_response, self.instance_url = '#{self.instance_url}' "

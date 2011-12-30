@@ -130,6 +130,8 @@ module Databasedotcom
           self.instance_url = options[:instance_url]
           self.oauth_token = options[:token]
           self.refresh_token = options[:refresh_token]
+          puts "-------- authenticate ---------- self.instance_url = '#{self.instance_url}', self.oauth_token = '#{self.oauth_token}',  self.refresh_token = '#{self.refresh_token}' "
+          
         end
       end
 

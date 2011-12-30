@@ -363,7 +363,7 @@ module Databasedotcom
 
     def ensure_expected_response(expected_result_class)
       response = yield
-      puts "ensure_expected_response, response = '#{response}' "
+      puts "ensure_expected_response, response  "
       unless response.is_a?(expected_result_class || Net::HTTPSuccess)
         if response.is_a?(Net::HTTPUnauthorized)
           if self.refresh_token

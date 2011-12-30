@@ -535,10 +535,15 @@ module Databasedotcom
     end
 
     def parse_auth_response(body)
+      puts "------- parse_auth_response, body = '#{body}' "
       json = JSON.parse(body)
       parse_user_id_and_org_id_from_identity_url(json["id"])
+      puts "------- parse_auth_response, self.instance_url = '#{self.instance_url}' "
+      puts "------- parse_auth_response, self.oauth_token = '#{self.oauth_token}' "
       self.instance_url = json["instance_url"]
       self.oauth_token = json["access_token"]
+      puts "------- parse_auth_response, self.instance_url = '#{self.instance_url}' "
+      puts "------- parse_auth_response, self.oauth_token = '#{self.oauth_token}' "
     end
 
     def query_org_id

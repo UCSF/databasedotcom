@@ -345,7 +345,6 @@ module Databasedotcom
       ensure_expected_response(options[:expected_result_class]) do
         puts "------- with_encoded_path_and_checked_response options = '#{options}', parameters = '#{parameters}', path = '#{path}' "
         with_logging(encode_path_with_params(path, parameters), options) do |encoded_path|
-          puts "------- with_encoded_path_and_checked_response encoded_path = '#{encoded_path}' "
           yield(encoded_path)
         end
       end

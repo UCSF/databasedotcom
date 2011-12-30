@@ -353,10 +353,13 @@ module Databasedotcom
           if self.refresh_token
             puts "-------- ensure_expected_response --------- refresh_token = '#{self.refresh_token}', host = '#{self.host}', client_id = '#{self.client_id}', client_secret= '#{self.client_secret}' "
              response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "refresh_token", :refresh_token => self.refresh_token, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
+              puts "------- ensure_expected_response ---response1 = '#{response}' "
               response = https_request(self.host).post(encoded_path, nil)
+              puts "------- ensure_expected_response ---response2 = '#{response}' , encoded_path = '#{encoded_path}' "
               if response.is_a?(Net::HTTPOK)
                 parse_auth_response(response.body)
               end
+              puts "------------ ensure_expected_response --- response = '#{response}' "
               response
             end
           elsif self.username && self.password

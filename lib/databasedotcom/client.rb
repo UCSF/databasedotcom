@@ -295,8 +295,10 @@ module Databasedotcom
     def http_get(path, parameters={}, headers={})
       puts "--------- http_get ---------- " 
       with_encoded_path_and_checked_response(path, parameters) do |encoded_path|
-        puts "--------- http_get encoded_path = '#{encoded_path}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
+        puts "--------- http_get 1, encoded_path = '#{encoded_path}', self.refresh_token = '#{self.refresh_token}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
         https_request.get(encoded_path, {"Authorization" => "OAuth #{self.oauth_token}"}.merge(headers))
+        puts "--------- http_get 2, encoded_path = '#{encoded_path}', self.refresh_token = '#{self.refresh_token}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
+     
       end
     end
 

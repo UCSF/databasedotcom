@@ -343,7 +343,6 @@ module Databasedotcom
     def with_encoded_path_and_checked_response(path, parameters, options = {})
       puts "------- with_encoded_path_and_checked_response ---------- "
       ensure_expected_response(options[:expected_result_class]) do
-        puts "------- with_encoded_path_and_checked_response options = '#{options}', parameters = '#{parameters}', path = '#{path}' "
         with_logging(encode_path_with_params(path, parameters), options) do |encoded_path|
           yield(encoded_path)
         end
@@ -354,10 +353,8 @@ module Databasedotcom
       puts "--------- with_logging ----------- "
       log_request(encoded_path, options)
       response = yield encoded_path
-      puts "--------- with_logging response = '#{response}' "
       log_response(response)
       response
-      puts "--------- with_logging response = '#{response}' "
     end
 
     def ensure_expected_response(expected_result_class)

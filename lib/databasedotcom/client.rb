@@ -293,7 +293,9 @@ module Databasedotcom
     # +Authorization+ header is automatically included, as are any additional headers specified in _headers_.  Returns the HTTPResult if it is of type
     # HTTPSuccess- raises SalesForceError otherwise.
     def http_get(path, parameters={}, headers={})
+      puts "--------- http_get path = '#{path}' " 
       with_encoded_path_and_checked_response(path, parameters) do |encoded_path|
+        puts "--------- http_get encoded_path = '#{encoded_path}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
         https_request.get(encoded_path, {"Authorization" => "OAuth #{self.oauth_token}"}.merge(headers))
       end
     end
@@ -339,23 +341,29 @@ module Databasedotcom
     private
 
     def with_encoded_path_and_checked_response(path, parameters, options = {})
+      puts "------- with_encoded_path_and_checked_response path = '#{path}' "
       ensure_expected_response(options[:expected_result_class]) do
+        puts "------- with_encoded_path_and_checked_response options = '#{options}', parameters = '#{parameters}', path = '#{path}' "
         with_logging(encode_path_with_params(path, parameters), options) do |encoded_path|
+          puts "------- with_encoded_path_and_checked_response encoded_path = '#{encoded_path}' "
           yield(encoded_path)
         end
       end
     end
 
     def with_logging(encoded_path, options)
+      puts "--------- with_logging encoded_path = '#{encoded_path}', options = '#{options}' "
       log_request(encoded_path, options)
       response = yield encoded_path
+      puts "--------- with_logging response = '#{response}' "
       log_response(response)
       response
+      puts "--------- with_logging response = '#{response}' "
     end
 
     def ensure_expected_response(expected_result_class)
       response = yield
-      puts "ensure_expected_response"
+      puts "ensure_expected_response, response = '#{response}' "
       unless response.is_a?(expected_result_class || Net::HTTPSuccess)
         if response.is_a?(Net::HTTPUnauthorized)
           if self.refresh_token

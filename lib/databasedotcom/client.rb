@@ -119,7 +119,7 @@ module Databasedotcom
       elsif options.is_a?(Hash)
         puts "-------- authenticate ---------- HASH"
         if options.has_key?("provider")
-          puts "-------- authenticate ---------- provider, options = '#{options.inspect}' "
+          puts "-------- authenticate ---------- provider, options  "
           parse_user_id_and_org_id_from_identity_url(options["uid"])
           self.instance_url = options["credentials"]["instance_url"]
           self.oauth_token = options["credentials"]["token"]

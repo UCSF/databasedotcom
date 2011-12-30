@@ -101,7 +101,10 @@ module Databasedotcom
     #
     # Raises SalesForceError if an error occurs
     def authenticate(options = nil)
+      puts "-------- authenticate ---------- "
+      
       if user_and_pass?(options)
+        puts "-------- authenticate ---------- user password"
         req = https_request(self.host)
         user = self.username || options[:username]
         pass = self.password || options[:password]
@@ -114,12 +117,15 @@ module Databasedotcom
         self.password = pass
         parse_auth_response(result.body)
       elsif options.is_a?(Hash)
+        puts "-------- authenticate ---------- HASH"
         if options.has_key?("provider")
+          puts "-------- authenticate ---------- provider, options = '#{options.inspect}' "
           parse_user_id_and_org_id_from_identity_url(options["uid"])
           self.instance_url = options["credentials"]["instance_url"]
           self.oauth_token = options["credentials"]["token"]
           self.refresh_token = options["credentials"]["refresh_token"]
         else
+          puts "-------- authenticate ---------- options[:refresh_token] = '#{options[:refresh_token]}', options[:token] = '#{options[:token]}',  options[:instance_url] = '#{options[:instance_url]}' "
           raise ArgumentError unless options.has_key?(:token) && options.has_key?(:instance_url)
           self.instance_url = options[:instance_url]
           self.oauth_token = options[:token]

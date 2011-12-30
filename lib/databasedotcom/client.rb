@@ -293,7 +293,7 @@ module Databasedotcom
     # +Authorization+ header is automatically included, as are any additional headers specified in _headers_.  Returns the HTTPResult if it is of type
     # HTTPSuccess- raises SalesForceError otherwise.
     def http_get(path, parameters={}, headers={})
-      puts "--------- http_get ---------- " 
+      puts "--------- http_get ---------- self.refresh_token = '#{self.refresh_token}' " 
       with_encoded_path_and_checked_response(path, parameters) do |encoded_path|
         puts "--------- http_get 1, encoded_path = '#{encoded_path}', self.refresh_token = '#{self.refresh_token}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
         https_request.get(encoded_path, {"Authorization" => "OAuth #{self.oauth_token}"}.merge(headers))
@@ -343,7 +343,7 @@ module Databasedotcom
     private
 
     def with_encoded_path_and_checked_response(path, parameters, options = {})
-      puts "------- with_encoded_path_and_checked_response ---------- "
+      puts "------- with_encoded_path_and_checked_response ---------- self.refresh_token = '#{self.refresh_token}'"
       ensure_expected_response(options[:expected_result_class]) do
         with_logging(encode_path_with_params(path, parameters), options) do |encoded_path|
           yield(encoded_path)
@@ -352,7 +352,7 @@ module Databasedotcom
     end
 
     def with_logging(encoded_path, options)
-      puts "--------- with_logging ----------- "
+      puts "--------- with_logging ----------- self.refresh_token = '#{self.refresh_token}'"
       log_request(encoded_path, options)
       response = yield encoded_path
       log_response(response)
@@ -552,7 +552,7 @@ module Databasedotcom
     end
 
     def parse_auth_response(body)
-      puts "------- parse_auth_response, body "
+      puts "------- parse_auth_response, self.refresh_token = '#{self.refresh_token}' "
       json = JSON.parse(body)
       parse_user_id_and_org_id_from_identity_url(json["id"])
       puts "------- parse_auth_response, self.instance_url = '#{self.instance_url}' "

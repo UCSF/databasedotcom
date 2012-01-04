@@ -165,14 +165,19 @@ module Databasedotcom
       classes = (classnames.is_a?(Array) ? classnames : [classnames]).collect do |clazz|
         original_classname = clazz
         clazz = original_classname[0,1].capitalize + original_classname[1..-1]
+        puts "materialize self.refresh_token = '#{self.refresh_token}' "
         unless const_defined_in_module(module_namespace, clazz)
           new_class = module_namespace.const_set(clazz, Class.new(Databasedotcom::Sobject::Sobject))
+          puts "materialize unless self.refresh_token = '#{self.refresh_token}' "
           new_class.client = self
+          puts "materialize unless self.refresh_token = '#{self.refresh_token}' "
           new_class.materialize(original_classname)
           new_class
         else
+          puts "materialize else self.refresh_token = '#{self.refresh_token}' "
           module_namespace.const_get(clazz)
         end
+        puts "materialize end self.refresh_token = '#{self.refresh_token}' "
       end
 
       classes.length == 1 ? classes.first : classes

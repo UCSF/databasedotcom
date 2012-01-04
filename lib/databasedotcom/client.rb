@@ -174,7 +174,7 @@ module Databasedotcom
           new_class.materialize(original_classname)
           new_class
         else
-          puts "materialize else self.refresh_token = '#{self.refresh_token}' "
+          puts "materialize else self.refresh_token  "
           module_namespace.const_get(clazz)
         end
         puts "materialize end self.refresh_token = '#{self.refresh_token}' "

@@ -162,7 +162,7 @@ module Databasedotcom
     #
     # The classes defined by materialize derive from Sobject, and have getters and setters defined for all the attributes defined by the associated Force.com Sobject.
     def materialize(classnames)
-      puts "materialize "
+      puts "materialize self.refresh_token = '{self.refresh_token}' "
       classes = (classnames.is_a?(Array) ? classnames : [classnames]).collect do |clazz|
         original_classname = clazz
         clazz = original_classname[0,1].capitalize + original_classname[1..-1]
@@ -175,7 +175,7 @@ module Databasedotcom
           module_namespace.const_get(clazz)
         end
       end
-
+      puts "materialize self.refresh_token = '{self.refresh_token}' "
       classes.length == 1 ? classes.first : classes
     end
 

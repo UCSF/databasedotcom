@@ -101,10 +101,7 @@ module Databasedotcom
     #
     # Raises SalesForceError if an error occurs
     def authenticate(options = nil)
-      puts "-------- authenticate ---------- "
-      
       if user_and_pass?(options)
-        puts "-------- authenticate ---------- user password"
         req = https_request(self.host)
         user = self.username || options[:username]
         pass = self.password || options[:password]
@@ -117,21 +114,16 @@ module Databasedotcom
         self.password = pass
         parse_auth_response(result.body)
       elsif options.is_a?(Hash)
-        puts "-------- authenticate ---------- HASH"
         if options.has_key?("provider")
-          puts "-------- authenticate ---------- provider, options  "
           parse_user_id_and_org_id_from_identity_url(options["uid"])
           self.instance_url = options["credentials"]["instance_url"]
           self.oauth_token = options["credentials"]["token"]
           self.refresh_token = options["credentials"]["refresh_token"]
         else
-          puts "-------- authenticate ---------- options[:refresh_token] = '#{options[:refresh_token]}', options[:token] = '#{options[:token]}',  options[:instance_url] = '#{options[:instance_url]}' "
           raise ArgumentError unless options.has_key?(:token) && options.has_key?(:instance_url)
           self.instance_url = options[:instance_url]
           self.oauth_token = options[:token]
           self.refresh_token = options[:refresh_token]
-          puts "-------- authenticate ---------- self.instance_url = '#{self.instance_url}', self.oauth_token = '#{self.oauth_token}',  self.refresh_token = '#{self.refresh_token}' "
-          
         end
       end
 
@@ -162,7 +154,6 @@ module Databasedotcom
     #
     # The classes defined by materialize derive from Sobject, and have getters and setters defined for all the attributes defined by the associated Force.com Sobject.
     def materialize(classnames)
-      puts "materialize self.refresh_token = '#{self.refresh_token}' "
       classes = (classnames.is_a?(Array) ? classnames : [classnames]).collect do |clazz|
         original_classname = clazz
         clazz = original_classname[0,1].capitalize + original_classname[1..-1]
@@ -175,7 +166,6 @@ module Databasedotcom
           module_namespace.const_get(clazz)
         end
       end
-      puts "materialize self.refresh_token = '#{self.refresh_token}' "
       classes.length == 1 ? classes.first : classes
     end
 
@@ -294,9 +284,7 @@ module Databasedotcom
     # +Authorization+ header is automatically included, as are any additional headers specified in _headers_.  Returns the HTTPResult if it is of type
     # HTTPSuccess- raises SalesForceError otherwise.
     def http_get(path, parameters={}, headers={})
-      puts "--------- http_get ---------- self.refresh_token = '#{self.refresh_token}' " 
       with_encoded_path_and_checked_response(path, parameters) do |encoded_path|
-        puts "--------- http_get 1, encoded_path = '#{encoded_path}', self.refresh_token = '#{self.refresh_token}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
         https_request.get(encoded_path, {"Authorization" => "OAuth #{self.oauth_token}"}.merge(headers))
         #puts "--------- http_get 2, encoded_path = '#{encoded_path}', self.refresh_token = '#{self.refresh_token}', self.oauth_token = '#{self.oauth_token}', headers = '#{headers}' " 
      
@@ -344,7 +332,6 @@ module Databasedotcom
     private
 
     def with_encoded_path_and_checked_response(path, parameters, options = {})
-      puts "------- with_encoded_path_and_checked_response ---------- self.refresh_token = '#{self.refresh_token}'"
       ensure_expected_response(options[:expected_result_class]) do
         with_logging(encode_path_with_params(path, parameters), options) do |encoded_path|
           yield(encoded_path)
@@ -353,7 +340,6 @@ module Databasedotcom
     end
 
     def with_logging(encoded_path, options)
-      puts "--------- with_logging ----------- self.refresh_token = '#{self.refresh_token}'"
       log_request(encoded_path, options)
       response = yield encoded_path
       log_response(response)
@@ -362,25 +348,18 @@ module Databasedotcom
 
     def ensure_expected_response(expected_result_class)
       response = yield
-      puts "ensure_expected_response, response  "
       unless response.is_a?(expected_result_class || Net::HTTPSuccess)
         if response.is_a?(Net::HTTPUnauthorized)
           if self.refresh_token
-            puts "-------- ensure_expected_response --------- refresh_token = '#{self.refresh_token}', host = '#{self.host}', client_id = '#{self.client_id}', client_secret= '#{self.client_secret}' "
              response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "refresh_token", :refresh_token => self.refresh_token, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
-              puts "------- ensure_expected_response ---response1 = '#{response}' "
               response = https_request(self.host).post(encoded_path, nil)
-              puts "------- ensure_expected_response ---response2 = '#{response}' , encoded_path = '#{encoded_path}' "
               if response.is_a?(Net::HTTPOK)
                 parse_auth_response(response.body)
               end
-              puts "------------ ensure_expected_response --- response = '#{response}' "
               response
             end
           elsif self.username && self.password
-          puts "-------- ensure_expected_response --------- username = '#{self.username}', password = '#{self.password}', host = '#{self.host}', client_id = '#{self.client_id}', client_secret= '#{self.client_secret}' "
-
-            response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "password", :username => self.username, :password => self.password, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
+             response = with_encoded_path_and_checked_response("/services/oauth2/token", { :grant_type => "password", :username => self.username, :password => self.password, :client_id => self.client_id, :client_secret => self.client_secret}, :host => self.host) do |encoded_path|
               response = https_request(self.host).post(encoded_path, nil)
               if response.is_a?(Net::HTTPOK)
                 parse_auth_response(response.body)
@@ -402,7 +381,6 @@ module Databasedotcom
 
     def https_request(host=nil)
        host = (host != nil) ? ((host.match(/^[http]/) ? URI.parse(host).host : host)) : host
-       puts "https_request host = '#{host}', instance_url = '#{self.instance_url}', ca_file = '#{self.ca_file}', verify_mode = '#{self.verify_mode}'  "
        Net::HTTP.new(host || URI.parse(self.instance_url).host, 443).tap do |http| 
         http.use_ssl = true 
         http.ca_file = self.ca_file if self.ca_file
@@ -553,15 +531,10 @@ module Databasedotcom
     end
 
     def parse_auth_response(body)
-      puts "------- parse_auth_response, self.refresh_token = '#{self.refresh_token}' "
       json = JSON.parse(body)
       parse_user_id_and_org_id_from_identity_url(json["id"])
-      puts "------- parse_auth_response, self.instance_url = '#{self.instance_url}' "
-      puts "------- parse_auth_response, self.oauth_token = '#{self.oauth_token}' "
       self.instance_url = json["instance_url"]
       self.oauth_token = json["access_token"]
-      puts "------- parse_auth_response, self.instance_url = '#{self.instance_url}' "
-      puts "------- parse_auth_response, self.oauth_token = '#{self.oauth_token}' "
     end
 
     def query_org_id
